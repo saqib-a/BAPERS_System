@@ -1,0 +1,355 @@
+-- MySQL dump 10.13  Distrib 5.7.21, for Win64 (x86_64)
+--
+-- Host: localhost    Database: bapers
+-- ------------------------------------------------------
+-- Server version	5.7.21-log
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `bapers`
+--
+
+/*!40000 DROP DATABASE IF EXISTS `bapers`*/;
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `bapers` /*!40100 DEFAULT CHARACTER SET utf8 */;
+
+USE `bapers`;
+
+--
+-- Table structure for table `cardpayment`
+--
+
+DROP TABLE IF EXISTS `cardpayment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cardpayment` (
+  `expiryDate` varchar(6) NOT NULL,
+  `type` varchar(45) NOT NULL,
+  `last_digits` varchar(4) NOT NULL,
+  `Payment_paymentId` int(11) NOT NULL,
+  PRIMARY KEY (`expiryDate`,`Payment_paymentId`),
+  KEY `fk_CardPayment_Payment_idx` (`Payment_paymentId`),
+  CONSTRAINT `fk_CardPayment_Payment` FOREIGN KEY (`Payment_paymentId`) REFERENCES `payment` (`paymentId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cardpayment`
+--
+
+LOCK TABLES `cardpayment` WRITE;
+/*!40000 ALTER TABLE `cardpayment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cardpayment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `customeraccount`
+--
+
+DROP TABLE IF EXISTS `customeraccount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `customeraccount` (
+  `accountNo` varchar(45) NOT NULL,
+  `accountName` varchar(45) NOT NULL,
+  `title` varchar(45) NOT NULL,
+  `firstName` varchar(45) NOT NULL,
+  `surname` varchar(45) NOT NULL,
+  `address` varchar(45) NOT NULL,
+  `postcode` varchar(8) NOT NULL,
+  `city` varchar(45) NOT NULL,
+  `phoneNo` varchar(11) NOT NULL,
+  `valuedCustomer` varchar(3) NOT NULL,
+  `statues` varchar(45) DEFAULT 'vaild',
+  `email` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`accountNo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customeraccount`
+--
+
+LOCK TABLES `customeraccount` WRITE;
+/*!40000 ALTER TABLE `customeraccount` DISABLE KEYS */;
+INSERT INTO `customeraccount` VALUES ('acs1212','Sakaw','Mr','sajawal','Kiani','25 asadad road','TW3 3LA','Bradford','01362517495','Yes',NULL,NULL);
+/*!40000 ALTER TABLE `customeraccount` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `discounttype`
+--
+
+DROP TABLE IF EXISTS `discounttype`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `discounttype` (
+  `discountID` int(11) NOT NULL,
+  `CustomerAccount_accountNo` varchar(45) NOT NULL,
+  `discountType` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`discountID`),
+  KEY `fk_Discount_CustomerAccount1_idx` (`CustomerAccount_accountNo`),
+  CONSTRAINT `fk_Discount_CustomerAccount1` FOREIGN KEY (`CustomerAccount_accountNo`) REFERENCES `customeraccount` (`accountNo`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `discounttype`
+--
+
+LOCK TABLES `discounttype` WRITE;
+/*!40000 ALTER TABLE `discounttype` DISABLE KEYS */;
+/*!40000 ALTER TABLE `discounttype` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fixed`
+--
+
+DROP TABLE IF EXISTS `fixed`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `fixed` (
+  `discountRate` int(11) NOT NULL,
+  `DiscountType_discountID` int(11) NOT NULL,
+  PRIMARY KEY (`DiscountType_discountID`),
+  KEY `fk_Fixed_DiscountType1_idx` (`DiscountType_discountID`),
+  CONSTRAINT `fk_Fixed_DiscountType1` FOREIGN KEY (`DiscountType_discountID`) REFERENCES `discounttype` (`discountID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fixed`
+--
+
+LOCK TABLES `fixed` WRITE;
+/*!40000 ALTER TABLE `fixed` DISABLE KEYS */;
+/*!40000 ALTER TABLE `fixed` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `flexible`
+--
+
+DROP TABLE IF EXISTS `flexible`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `flexible` (
+  `discountRate` varchar(45) DEFAULT NULL,
+  `DiscountType_discountID` int(11) NOT NULL,
+  `task_taskId` int(11) NOT NULL,
+  PRIMARY KEY (`DiscountType_discountID`,`task_taskId`),
+  KEY `fk_Flexible_DiscountType1_idx` (`DiscountType_discountID`),
+  KEY `fk_Flexible_task1_idx` (`task_taskId`),
+  CONSTRAINT `fk_Flexible_DiscountType1` FOREIGN KEY (`DiscountType_discountID`) REFERENCES `discounttype` (`discountID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Flexible_task1` FOREIGN KEY (`task_taskId`) REFERENCES `task` (`taskId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `flexible`
+--
+
+LOCK TABLES `flexible` WRITE;
+/*!40000 ALTER TABLE `flexible` DISABLE KEYS */;
+/*!40000 ALTER TABLE `flexible` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `job`
+--
+
+DROP TABLE IF EXISTS `job`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `job` (
+  `jobId` varchar(45) NOT NULL,
+  `due_amount` varchar(45) NOT NULL,
+  `urgent_job` varchar(3) NOT NULL,
+  `CustomerAccount_accountNo` varchar(45) NOT NULL,
+  `jobDescription` varchar(45) NOT NULL,
+  `Date` date NOT NULL,
+  `Alerted` varchar(5) DEFAULT 'false',
+  `isCompleted` varchar(45) DEFAULT 'no',
+  `active` varchar(45) DEFAULT 'no',
+  PRIMARY KEY (`jobId`),
+  KEY `fk_Job_CustomerAccount1_idx` (`CustomerAccount_accountNo`),
+  CONSTRAINT `fk_Job_CustomerAccount1` FOREIGN KEY (`CustomerAccount_accountNo`) REFERENCES `customeraccount` (`accountNo`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `job`
+--
+
+LOCK TABLES `job` WRITE;
+/*!40000 ALTER TABLE `job` DISABLE KEYS */;
+INSERT INTO `job` VALUES ('1','19','No','acs1212','asas','2018-05-01','true','no','no'),('2','15.52','Yes','acs1212','sfgrtefwds','2018-04-14','true','no','no'),('3','50.25','No','acs1212','hygtrfed','2018-04-12','true','no','no');
+/*!40000 ALTER TABLE `job` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `job_has_task`
+--
+
+DROP TABLE IF EXISTS `job_has_task`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `job_has_task` (
+  `Job_jobId` varchar(45) NOT NULL,
+  `Task_taskId` int(11) NOT NULL,
+  `completedBy` varchar(45) DEFAULT NULL,
+  `jobDate` varchar(45) DEFAULT NULL,
+  `status` varchar(45) DEFAULT 'pending',
+  `staff_staffId` varchar(45) NOT NULL,
+  `urgent_task` varchar(3) DEFAULT NULL,
+  KEY `fk_Job_has_Task_Task1_idx` (`Task_taskId`),
+  KEY `fk_Job_has_Task_Job1_idx` (`Job_jobId`),
+  KEY `fk_job_has_task_staff1_idx` (`staff_staffId`),
+  CONSTRAINT `fk_Job_has_Task_Job1` FOREIGN KEY (`Job_jobId`) REFERENCES `job` (`jobId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Job_has_Task_Task1` FOREIGN KEY (`Task_taskId`) REFERENCES `task` (`taskId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_job_has_task_staff1` FOREIGN KEY (`staff_staffId`) REFERENCES `staff` (`staffId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `job_has_task`
+--
+
+LOCK TABLES `job_has_task` WRITE;
+/*!40000 ALTER TABLE `job_has_task` DISABLE KEYS */;
+INSERT INTO `job_has_task` VALUES ('1',1,'Dave','','','test',NULL),('1',1,'James',NULL,NULL,'test',NULL),('1',1,'han',NULL,NULL,'test',NULL),('1',1,'James khan',NULL,NULL,'test',NULL),('1',1,'different name',NULL,NULL,'test',NULL),('1',2,'sarath vaman',NULL,'in progress','test',NULL),('1',2,'sarath vaman',NULL,'in progress','test',NULL);
+/*!40000 ALTER TABLE `job_has_task` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `payment`
+--
+
+DROP TABLE IF EXISTS `payment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `payment` (
+  `paymentId` int(11) NOT NULL,
+  `amountPaid` float NOT NULL,
+  `paymentType` varchar(45) NOT NULL,
+  `CustomerAccount_accountNo` varchar(45) NOT NULL,
+  PRIMARY KEY (`paymentId`,`CustomerAccount_accountNo`),
+  KEY `fk_Payment_CustomerAccount1_idx` (`CustomerAccount_accountNo`),
+  CONSTRAINT `fk_Payment_CustomerAccount1` FOREIGN KEY (`CustomerAccount_accountNo`) REFERENCES `customeraccount` (`accountNo`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payment`
+--
+
+LOCK TABLES `payment` WRITE;
+/*!40000 ALTER TABLE `payment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `payment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `staff`
+--
+
+DROP TABLE IF EXISTS `staff`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `staff` (
+  `staffId` varchar(45) NOT NULL,
+  `firstName` varchar(45) NOT NULL,
+  `surname` varchar(45) NOT NULL,
+  `jobTitle` varchar(45) NOT NULL,
+  `password` varchar(45) DEFAULT NULL,
+  `email` varchar(45) NOT NULL,
+  PRIMARY KEY (`staffId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `staff`
+--
+
+LOCK TABLES `staff` WRITE;
+/*!40000 ALTER TABLE `staff` DISABLE KEYS */;
+INSERT INTO `staff` VALUES ('','','','Office Manager','',''),('acsg453','sajawal','kiani','Shift Manager','1','sajawal.kiani@city.ac.uk'),('Manager','name','khan','Office Manager','Get_it_done','sarath.vaman@city.ac.uk'),('test','Sajawal ','Kiani','Office Manager','1','sajawal.kiani@city.ac.uk');
+/*!40000 ALTER TABLE `staff` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `task`
+--
+
+DROP TABLE IF EXISTS `task`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `task` (
+  `taskId` int(11) NOT NULL,
+  `location` varchar(45) NOT NULL,
+  `shelfslot` varchar(45) NOT NULL,
+  `price` varchar(45) NOT NULL,
+  `duration` varchar(45) NOT NULL,
+  `taskDescription` varchar(45) NOT NULL,
+  `StartTime` int(6) NOT NULL,
+  `TaskCompleted` varchar(3) DEFAULT 'no',
+  PRIMARY KEY (`taskId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `task`
+--
+
+LOCK TABLES `task` WRITE;
+/*!40000 ALTER TABLE `task` DISABLE KEYS */;
+INSERT INTO `task` VALUES (1,'bradford','goaada','25.25','50','xdcfgvbhjn',1400,'no'),(2,'london','cfgvbhj','30.52','40','exrctvybunm',2101,'no');
+/*!40000 ALTER TABLE `task` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `volumediscount`
+--
+
+DROP TABLE IF EXISTS `volumediscount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `volumediscount` (
+  `discountRate` varchar(45) DEFAULT NULL,
+  `volume` varchar(45) NOT NULL,
+  `DiscountType_discountID` int(11) NOT NULL,
+  PRIMARY KEY (`DiscountType_discountID`),
+  KEY `fk_VolumeDiscount_DiscountType1_idx` (`DiscountType_discountID`),
+  CONSTRAINT `fk_VolumeDiscount_DiscountType1` FOREIGN KEY (`DiscountType_discountID`) REFERENCES `discounttype` (`discountID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `volumediscount`
+--
+
+LOCK TABLES `volumediscount` WRITE;
+/*!40000 ALTER TABLE `volumediscount` DISABLE KEYS */;
+/*!40000 ALTER TABLE `volumediscount` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2018-04-14 23:19:03
